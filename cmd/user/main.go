@@ -2,27 +2,28 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/go-openapi/loads"
-	"github.com/go-openapi/runtime/middleware"
+	"github.com/dom/user/internal/api"
+	"github.com/dom/user/internal/config"
+	"github.com/dom/user/internal/database"
 )
 
 func main() {
-	// create the Swagger UI handler
-	swaggerHandler := httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
-	)
 
-	// create the API handler
-	apiHandler := middleware.Spec("",
-		nil,
-		loads.Embedded(listUsers),
-	)
+	cfg, err := config.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// create the HTTP server
-	http.Handle("/swagger/", swaggerHandler)
-	http.Handle("/swagger/doc.json", apiHandler)
-	//http.HandleFunc("/users", listUsers)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	db, err := database.OpenDB(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r, err := api.SetupRouter(db)
+	if err != nil {
+		panic(err)
+	}
+	r.AppRouter.Logger.Fatal(r.AppRouter.Start(":8080"))
+
 }
