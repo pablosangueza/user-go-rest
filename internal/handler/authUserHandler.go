@@ -35,7 +35,7 @@ func (this AuthUserHandler) Handle(c echo.Context) error {
 		return err
 	}
 
-	if credetials.Email != "myusername" || credetials.Password != "mypassword" {
+	if credetials.Email != "psangueza@dom12.com" || credetials.Password != "mypassword" {
 		return echo.ErrUnauthorized
 	}
 

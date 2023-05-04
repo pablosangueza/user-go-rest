@@ -41,6 +41,10 @@ func SetupRouter(db *sqlx.DB) (*Router, error) {
 	}
 	usersGroup.GET("/:id", handler.NewGetUsersHandler(&getUsersParams).Handle)
 	usersGroup.GET("", handler.NewGetUsersHandler(&getUsersParams).Handle)
+	addUserParams := handler.AddUserHandlerParams{
+		Cmd: users.NewUserCommand(db),
+	}
+	usersGroup.POST("/new", handler.NewAddUserHandler(&addUserParams).Handle)
 
 	r := &Router{
 		AppRouter: echo,

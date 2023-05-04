@@ -44,11 +44,6 @@ func (s GetUsersHandler) Handle(c echo.Context) error {
 		}
 		return c.JSON(http.StatusOK, res)
 
-
-		
-
 	}
-
-
 
 }
