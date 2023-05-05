@@ -1,10 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/Shopify/sarama"
+	"github.com/dom/user/internal/config"
 	"github.com/labstack/echo"
 )
 
@@ -33,11 +36,12 @@ func (this KafkaHandler) Handle(c echo.Context) error {
 		return err
 	}
 
-	config := sarama.NewConfig()
-	config.Producer.RequiredAcks = sarama.WaitForAll
-	config.Producer.Retry.Max = 5
-	config.Producer.Return.Successes = true
-	producer, err := sarama.NewSyncProducer([]string{"localhost:9092"}, config)
+	saramaConfig := sarama.NewConfig()
+	saramaConfig.Producer.RequiredAcks = sarama.WaitForAll
+	saramaConfig.Producer.Retry.Max = 5
+	saramaConfig.Producer.Return.Successes = true
+	kafkaConfig := config.DefaultKafkaConfig()
+	producer, err := sarama.NewSyncProducer([]string{fmt.Sprintf("%s:%s", kafkaConfig.Host, strconv.Itoa(kafkaConfig.Port))}, saramaConfig)
 	if err != nil {
 		log.Fatalf("Error creating Kafka producer: %s", err.Error())
 	}
