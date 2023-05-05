@@ -45,6 +45,8 @@ func SetupRouter(db *sqlx.DB) (*Router, error) {
 		Cmd: users.NewUserCommand(db),
 	}
 	usersGroup.POST("/new", handler.NewAddUserHandler(&addUserParams).Handle)
+	kafkaParams := handler.KafkaHandlerParams{}
+	usersGroup.POST("/kafka", handler.NewKafkaHandler(&kafkaParams).Handle)
 
 	r := &Router{
 		AppRouter: echo,
